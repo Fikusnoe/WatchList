@@ -1,0 +1,75 @@
+networks:
+  watchlist-network:
+    driver: bridge
+
+services:
+  nginx:
+    image: nginx:stable-alpine
+    container_name: watchlist_nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/config:/etc/nginx/conf.d:ro
+      - ./nginx/certs:/etc/nginx/certs:ro
+      - ./laravel:/var/www/watchlist
+    depends_on:
+      - laravel
+      - fastapi
+    networks:
+      - watchlist-network
+    restart: unless-stopped
+
+  laravel:
+    build:
+      context: .
+      dockerfile: php.Dockerfile
+    container_name: watchlist_laravel
+    volumes:
+      - ./laravel:/var/www/watchlist
+    working_dir: /var/www/watchlist
+    networks:
+      - watchlist-network
+    restart: unless-stopped
+
+  fastapi:
+    image: python:3.11-alpine
+    container_name: watchlist_fastapi
+    volumes:
+      - ./fastapi:/app
+    working_dir: /app
+    command: sh -c "pip install fastapi uvicorn websockets aioredis && uvicorn main:app --host 0.0.0.0 --port 8000 --reload"
+    networks:
+      - watchlist-network
+    restart: unless-stopped
+
+  mysql:
+    image: mysql:8.0
+    container_name: watchlist_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: watchlist_db
+      MYSQL_USER: rocev
+      MYSQL_PASSWORD: "123"
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - watchlist-network
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: watchlist_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - watchlist-network
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
+  redis_data:

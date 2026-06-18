@@ -1,0 +1,44 @@
+# System
+*.log
+Thumbs.db
+.DS_Store
+.phpactor.json
+.phpunit.result.cache
+_ide_helper.php
+Homestead.json
+Homestead.yaml
+
+# Docker + DB
+docker/db_data/
+mysql_data/
+redis_data/
+
+# Certs
+nginx/certs/
+*.crt
+*.key
+*.pem
+
+# Env
+.env
+.env.backup
+.env.production
+laravel/.env
+fastapi/.env
+auth.json
+
+# FastAPI
+fastapi/.venv/
+fastapi/venv/
+fastapi/__pycache__/
+
+# Laravel
+laravel/vendor/
+laravel/node_modules/
+laravel/.phpunit.cache/
+laravel/storage/*.key
+laravel/storage/pail/
+laravel/public/build/
+laravel/public/hot/
+laravel/public/storage
+laravel/public/fonts-manifest.dev.json
