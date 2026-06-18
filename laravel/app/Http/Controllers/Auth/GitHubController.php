@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;    
 use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
+use Illuminate\Support\Facades\Auth;
 
 class GitHubController extends Controller
 {
@@ -14,21 +15,21 @@ class GitHubController extends Controller
         return Socialite::driver('github')->redirect();
     }
 
-public function callback()
-{
-    $githubUser = Socialite::driver('github')->user();
+    public function callback()
+    {
+        $githubUser = Socialite::driver('github')->user();
 
-    $email = $githubUser->email ?? ($githubUser->id . '@github.com');
+        $email = $githubUser->email ?? ($githubUser->id . '@github.com');
 
-    $user = User::updateOrCreate([
-        'email' => $email,
-    ], [
-        'name' => $githubUser->name ?? $githubUser->nickname,
-        'password' => bcrypt(\Illuminate\Support\Str::random(24)), 
-    ]);
+        $user = User::updateOrCreate([
+            'email' => $email,
+        ], [
+            'name' => $githubUser->name ?? $githubUser->nickname,
+            'password' => bcrypt(\Illuminate\Support\Str::random(24)), 
+        ]);
 
-    Auth::login($user);
-    
-    return redirect('/dashboard');
-}
+        Auth::login($user);
+        
+        return redirect('/dashboard');
+    }
 }
