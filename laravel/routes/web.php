@@ -4,10 +4,18 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\GitHubController;
 use Illuminate\Http\Request;
+use App\Http\Controllers\WorkController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [WorkController::class, 'index'])->name('home');
+//Route::get('/', function () {
+//    return view('welcome');
+//});
+
+// Тематические страницы
+Route::get('/movies', [WorkController::class, 'movies'])->name('works.movies');
+Route::get('/series', [WorkController::class, 'series'])->name('works.series');
+Route::get('/games', [WorkController::class, 'games'])->name('works.games');
+Route::get('/books', [WorkController::class, 'books'])->name('works.books');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
