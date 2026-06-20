@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Work;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use App\Models\Review;
 
 class WorkController extends Controller
 {
@@ -17,45 +18,66 @@ class WorkController extends Controller
     /* Тематические страницы */
     public function movies(): View
     {
-        $works = Work::where('type', 'movie')->orderBy('release_year', 'desc')->paginate(10);
-        
-        return view('themes.themedPage', [
-            'works' => $works,
-            'title' => 'Фильмы',
-            'currentType' => 'movie'
-        ]);
+        return $this->getThemedPage('movie', 'Фильмы');
     }
 
     public function series(): View
     {
-        $works = Work::where('type', 'series')->orderBy('release_year', 'desc')->paginate(10);
-        
-        return view('themes.themedPage', [
-            'works' => $works,
-            'title' => 'Сериалы',
-            'currentType' => 'series'
-        ]);
+        return $this->getThemedPage('series', 'Сериалы');
     }
 
     public function games(): View
     {
-        $works = Work::where('type', 'game')->orderBy('release_year', 'desc')->paginate(10);
-        
-        return view('themes.themedPage', [
-            'works' => $works,
-            'title' => 'Игры',
-            'currentType' => 'game'
-        ]);
+        return $this->getThemedPage('game', 'Игры');
     }
 
     public function books(): View
     {
-        $works = Work::where('type', 'book')->orderBy('release_year', 'desc')->paginate(10);
-        
+        return $this->getThemedPage('book', 'Книги');
+    }
+
+    private function getThemedPage(string $type, string $title): View
+    {
+        $works = Work::where('type', $type)
+            ->orderBy('release_year', 'desc')
+            ->paginate(10);
+
+        $recentReviews = Review::whereHas('work', function ($query) use ($type) {
+            $query->where('type', $type);
+        })
+        ->with(['user', 'work'])
+        ->latest()
+        ->take(6)
+        ->get();
+
+        $popularWorksToday = Work::where('type', $type)
+            ->whereHas('reviews', function ($query) {
+                $query->whereDate('created_at', now());
+            })
+            ->withCount(['reviews' => function ($query) {
+                $query->whereDate('created_at', now());
+            }])
+            ->orderBy('reviews_count', 'desc')
+            ->take(6)
+            ->get();
+
+        $popularReviewsWeek = Review::whereHas('work', function ($query) use ($type) {
+                $query->where('type', $type);
+            })
+            ->where('created_at', '>=', now()->subDays(7))
+            ->with(['user', 'work'])
+            ->orderBy('rating', 'desc')
+            ->latest()
+            ->take(6)
+            ->get();
+
         return view('themes.themedPage', [
-            'works' => $works,
-            'title' => 'Книги',
-            'currentType' => 'book'
+            'works'         => $works,
+            'recentReviews' => $recentReviews,
+            'popularWorksToday' => $popularWorksToday,
+            'popularReviewsWeek' => $popularReviewsWeek,
+            'title'         => $title,
+            'currentType'   => $type
         ]);
     }
 

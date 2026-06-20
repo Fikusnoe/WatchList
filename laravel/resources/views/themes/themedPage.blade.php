@@ -20,7 +20,7 @@
         <h2 class="text-xl font-bold text-white tracking-tight">Недавние отзывы</h2>
         @if($recentReviews->isEmpty())
             <div class="bg-gray-800/40 border border-gray-700/60 rounded-xl p-6 text-center text-sm text-gray-400">
-                В этом разделе еще не оставляли отзывы.
+                Отзывов нет...
             </div>
         @else
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
@@ -82,7 +82,7 @@
                 <h2 class="text-xl font-bold text-white tracking-tight">Популярные отзывы на этой неделе</h2>
                 @if($popularReviewsWeek->isEmpty())
                     <div class="bg-gray-800/40 border border-gray-700/60 rounded-xl p-6 text-center text-sm text-gray-400">
-                        На этой неделе отзывы еще не оценивались.
+                        На этой неделе ещё ничего не оценили...
                     </div>
                 @else
                     <div class="space-y-4">
