@@ -8,9 +8,6 @@ use App\Http\Controllers\WorkController;
 
 // Главная страница
 Route::get('/', [WorkController::class, 'index'])->name('home');
-//Route::get('/', function () {
-//    return view('welcome');
-//});
 
 // Тематические страницы
 Route::get('/movies', [WorkController::class, 'movies'])->name('works.movies');
