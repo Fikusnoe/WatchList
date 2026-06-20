@@ -4,9 +4,30 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\GitHubController;
 use Illuminate\Http\Request;
+use App\Http\Controllers\WorkController;
 
-Route::get('/', function () {
-    return view('welcome');
+// Главная страница
+Route::get('/', [WorkController::class, 'index'])->name('home');
+//Route::get('/', function () {
+//    return view('welcome');
+//});
+
+// Тематические страницы
+Route::get('/movies', [WorkController::class, 'movies'])->name('works.movies');
+Route::get('/series', [WorkController::class, 'series'])->name('works.series');
+Route::get('/games', [WorkController::class, 'games'])->name('works.games');
+Route::get('/books', [WorkController::class, 'books'])->name('works.books');
+
+// Каталог всех произведений
+Route::prefix('catalog')->name('catalog.')->group(function () {
+    // Страница выбора
+    Route::get('/', [WorkController::class, 'catalogIndex'])->name('index');
+
+    // Подразделы каталога со списками
+    Route::get('/movies', [WorkController::class, 'catalogMovies'])->name('movies');
+    Route::get('/series', [WorkController::class, 'catalogSeries'])->name('series');
+    Route::get('/games', [WorkController::class, 'catalogGames'])->name('games');
+    Route::get('/books', [WorkController::class, 'catalogBooks'])->name('books');
 });
 
 Route::get('/dashboard', function () {
