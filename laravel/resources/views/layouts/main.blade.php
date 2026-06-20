@@ -16,21 +16,12 @@
                     WatchList
                 </a>
                 
-                <nav class="hidden md:flex items-center space-x-6">
-                    <div class="relative group">
-                        <button class="text-gray-300 hover:text-white transition flex items-center space-x-1">
-                            <span>Каталоги</span>
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                        </button>
-                        <div class="absolute left-0 mt-2 w-48 bg-gray-800 border border-gray-700 rounded-md shadow-lg py-1 hidden group-hover:block hover:block">
-                            <a href="{{ route('works.movies') }}" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white">Фильмы</a>
-                            <a href="{{ route('works.series') }}" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white">Сериалы</a>
-                            <a href="{{ route('works.games') }}" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white">Игры</a>
-                            <a href="{{ route('works.books') }}" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white">Книги</a>
-                        </div>
-                    </div>
+                <nav class="md:flex items-center space-x-6">
+                    <a href="{{ route('catalog.index') }}" class="text-gray-300 hover:text-white transition font-medium {{ request()->routeIs('catalog.*') ? 'text-indigo-400 border-b-2 border-indigo-400' : '' }}">
+                        Каталоги
+                    </a>
 
-                    <a href="#activity-feed" class="text-gray-300 hover:text-white transition">
+                    <a href="#activity-feed" class="text-gray-300 hover:text-white transition font-medium">
                         Лента активности
                     </a>
                 </nav>
