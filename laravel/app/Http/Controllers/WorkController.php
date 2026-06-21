@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Work;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use App\Models\Review;
 
 class WorkController extends Controller
 {
@@ -14,51 +15,69 @@ class WorkController extends Controller
         return view('home');
     }
 
-    /* Страница "Фильмы" */
+    /* Тематические страницы */
     public function movies(): View
     {
-        $works = Work::where('type', 'movie')->orderBy('release_year', 'desc')->paginate(10);
-        
-        return view('themes.catalog', [
-            'works' => $works,
-            'title' => 'Фильмы',
-            'currentType' => 'movie'
-        ]);
+        return $this->getThemedPage('movie', 'Фильмы');
     }
 
-    /* Страница "Сериалы" */
     public function series(): View
     {
-        $works = Work::where('type', 'series')->orderBy('release_year', 'desc')->paginate(10);
-        
-        return view('themes.catalog', [
-            'works' => $works,
-            'title' => 'Сериалы',
-            'currentType' => 'series'
-        ]);
+        return $this->getThemedPage('series', 'Сериалы');
     }
 
-    /* Страница "Игры" */
     public function games(): View
     {
-        $works = Work::where('type', 'game')->orderBy('release_year', 'desc')->paginate(10);
-        
-        return view('themes.catalog', [
-            'works' => $works,
-            'title' => 'Игры',
-            'currentType' => 'game'
-        ]);
+        return $this->getThemedPage('game', 'Игры');
     }
 
-    /* Страница "Книги" */
     public function books(): View
     {
-        $works = Work::where('type', 'book')->orderBy('release_year', 'desc')->paginate(10);
-        
-        return view('themes.catalog', [
-            'works' => $works,
-            'title' => 'Книги',
-            'currentType' => 'book'
+        return $this->getThemedPage('book', 'Книги');
+    }
+
+    private function getThemedPage(string $type, string $title): View
+    {
+        $works = Work::where('type', $type)
+            ->orderBy('release_year', 'desc')
+            ->paginate(10);
+
+        $recentReviews = Review::whereHas('work', function ($query) use ($type) {
+            $query->where('type', $type);
+        })
+        ->with(['user', 'work'])
+        ->latest()
+        ->take(6)
+        ->get();
+
+        $popularWorksToday = Work::where('type', $type)
+            ->whereHas('reviews', function ($query) {
+                $query->whereDate('created_at', now());
+            })
+            ->withCount(['reviews' => function ($query) {
+                $query->whereDate('created_at', now());
+            }])
+            ->orderBy('reviews_count', 'desc')
+            ->take(6)
+            ->get();
+
+        $popularReviewsWeek = Review::whereHas('work', function ($query) use ($type) {
+                $query->where('type', $type);
+            })
+            ->where('created_at', '>=', now()->subDays(7))
+            ->with(['user', 'work'])
+            ->orderBy('rating', 'desc')
+            ->latest()
+            ->take(6)
+            ->get();
+
+        return view('themes.themedPage', [
+            'works'         => $works,
+            'recentReviews' => $recentReviews,
+            'popularWorksToday' => $popularWorksToday,
+            'popularReviewsWeek' => $popularReviewsWeek,
+            'title'         => $title,
+            'currentType'   => $type
         ]);
     }
 
@@ -68,25 +87,22 @@ class WorkController extends Controller
         return view('catalog.catalog');
     }
 
-    /* Подраздел каталога: Фильмы */
+    /* Каталоги */
     public function catalogMovies(Request $request)
     {
         return $this->getFilteredCatalog($request, 'movie', 'Каталог фильмов');
     }
 
-    /* Подраздел каталога: Сериалы */
     public function catalogSeries(Request $request)
     {
         return $this->getFilteredCatalog($request, 'series', 'Каталог сериалов');
     }
 
-    /* Подраздел каталога: Игры */
     public function catalogGames(Request $request)
     {
         return $this->getFilteredCatalog($request, 'game', 'Каталог игр');
     }
 
-    /* Подраздел каталога: Книги */
     public function catalogBooks(Request $request)
     {
         return $this->getFilteredCatalog($request, 'book', 'Каталог книг');
@@ -109,7 +125,7 @@ class WorkController extends Controller
             ->distinct()
             ->pluck('genre');
 
-        $works = $query->paginate(12);
+        $works = $query->paginate(5);
 
         return view('catalog.themedCatalog', [
             'works' => $works,

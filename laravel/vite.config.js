@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
 import fs from 'fs';
+import react from '@vitejs/plugin-react';
 
 let host_key, host_cert;
 try {
@@ -16,6 +17,7 @@ export default defineConfig({
             input: ['resources/css/app.css', 'resources/js/app.js'],
             refresh: true,
         }),
+        react(),
     ],
     server: {
         host: '0.0.0.0',

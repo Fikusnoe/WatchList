@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\GitHubController;
 use Illuminate\Http\Request;
 use App\Http\Controllers\WorkController;
+use App\Http\Controllers\ReviewController;
 
 // Главная страница
 Route::get('/', [WorkController::class, 'index'])->name('home');
@@ -35,6 +36,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
 });
 
 require __DIR__.'/auth.php';
@@ -52,3 +54,4 @@ Route::get('/dashboard', function (Request $request) {
         'apiToken' => $token
     ]);
 })->middleware(['auth'])->name('dashboard');
+
