@@ -13,5 +13,12 @@ class Work extends Model
     {
         return $this->hasMany(Review::class);
     }
+
+    public function watchlistUsers()
+    {
+        return $this->belongsToMany(User::class, 'watchlists', 'work_id', 'user_id')
+            ->withPivot('status')
+            ->withTimestamps();
+    }
 }
 

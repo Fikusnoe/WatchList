@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\GitHubController;
 use Illuminate\Http\Request;
 use App\Http\Controllers\WorkController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\WatchlistController;
 
 // Главная страница
 Route::get('/', [WorkController::class, 'index'])->name('home');
@@ -42,6 +43,9 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
+
+    Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
+    Route::post('/works/{id}/watchlist', [WatchlistController::class, 'update'])->name('watchlist.update');
 });
 
 require __DIR__.'/auth.php';

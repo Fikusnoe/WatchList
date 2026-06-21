@@ -13,7 +13,7 @@ class ReviewController extends Controller
     {
         $validated = $request->validate([
             'work_id' => 'required|exists:works,id',
-            'rating'  => 'required|integer|min:1|max:5',
+            'rating'  => 'required|integer|min:1|max:10',
             'text'    => 'required|string|max:1000',
         ]);
 

@@ -23,6 +23,14 @@ class User extends Authenticatable
      *
      * @return array<string, string>
      */
+
+    public function watchlistWorks()
+    {
+        return $this->belongsToMany(Work::class, 'watchlists', 'user_id', 'work_id')
+            ->withPivot('status')
+            ->withTimestamps();
+    }
+
     protected function casts(): array
     {
         return [

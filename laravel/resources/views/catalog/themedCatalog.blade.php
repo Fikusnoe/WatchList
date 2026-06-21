@@ -84,9 +84,9 @@
                             </span>
                         </div>
 
-                        <h3 class="text-lg font-bold text-white group-hover:text-indigo-400 transition line-clamp-2" title="{{ $work->title }}">
+                        <a href="{{ route('works.show', $work->id) }}" class="text-lg font-bold text-white group-hover:text-indigo-400 transition line-clamp-2" title="{{ $work->title }}">
                             {{ $work->title }}
-                        </h3>
+                        </a>
 
                         @if($work->description)
                             <p class="text-sm text-gray-400 line-clamp-3">

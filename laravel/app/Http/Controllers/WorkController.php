@@ -9,13 +9,13 @@ use App\Models\Review;
 
 class WorkController extends Controller
 {
-    /* Главная страница */
+    // Главная страница
     public function index(): View
     {
         return view('home');
     }
 
-    /* Тематические страницы */
+    // Тематические страницы
     public function movies(): View
     {
         return $this->getThemedPage('movie', 'Фильмы');
@@ -81,7 +81,7 @@ class WorkController extends Controller
         ]);
     }
 
-    /* Главная страница каталога */
+    // Главная страница каталога=
     public function catalogIndex()
     {
         return view('catalog.catalog');
@@ -132,6 +132,35 @@ class WorkController extends Controller
             'genres' => $genres,
             'title' => $title,
             'currentType' => $type
+        ]);
+    }
+
+    // Карточка произведения
+    public function show($id): View
+    {
+        $work = Work::with(['reviews' => function ($query) {
+            $query->latest();
+        }, 'reviews.user'])->findOrFail($id);
+
+        $averageRating = $work->reviews->avg('rating');
+        $averageRating = $averageRating ? round($averageRating, 1) : null;
+
+        $currentStatus = null;
+        if (auth()->check()) {
+            $watchlistEntry = auth()->user()
+                ->watchlistWorks()
+                ->where('work_id', $id)
+                ->first();
+                
+            if ($watchlistEntry) {
+                $currentStatus = $watchlistEntry->pivot->status;
+            }
+        }
+
+        return view('cards.card', [
+            'work'          => $work,
+            'averageRating' => $averageRating,
+            'currentStatus' => $currentStatus,
         ]);
     }
 }
