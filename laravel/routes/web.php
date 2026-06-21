@@ -54,13 +54,3 @@ require __DIR__.'/auth.php';
 Route::get('/auth/github', [GitHubController::class, 'redirect'])->name('auth.github');
 Route::get('/auth/github/callback', [GitHubController::class, 'callback']);
 
-// JWT
-//Route::get('/', function (Request $request) {
-//    $user = $request->user();
-//    $token = $user->createToken('Watchlist Personal Access Token')->accessToken;
-
-//    return view('home', [
-//        'apiToken' => $token
-//    ]);
-//})->middleware(['auth'])->name('home');
-
