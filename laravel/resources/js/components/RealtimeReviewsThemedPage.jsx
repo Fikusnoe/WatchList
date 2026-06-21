@@ -18,7 +18,7 @@ const RealtimeReviewsIsland = () => {
         if (!pageType) return;
 
         const connectWebSocket = () => {
-            const wsUrl = `ws://localhost:8000/ws/reviews?type=${pageType}`;
+            const wsUrl = `wss://api.watchlist.fgsfds.ai-info.ru/ws`;
             
             socketRef.current = new WebSocket(wsUrl);
 
@@ -28,11 +28,17 @@ const RealtimeReviewsIsland = () => {
 
             socketRef.current.onmessage = (event) => {
                 try {
-                    const newReview = JSON.parse(event.data);
+                    const data = JSON.parse(event.data);
                     
-                    if (newReview.type === pageType) {
+                    if (data.type === 'new_review') {
+                        const review = data.review;
+                        
+                        if (pageType && review.type !== pageType) {
+                            return; 
+                        }
+
                         setReviews((prevReviews) => {
-                            const updated = [newReview, ...prevReviews];
+                            const updated = [review, ...prevReviews];
                             return updated.slice(0, 5);
                         });
                     }
@@ -98,7 +104,7 @@ const RealtimeReviewsIsland = () => {
                                 <span class="font-bold text-gray-300">{review.username}</span>
                                 <div class="flex items-center space-x-1 text-amber-400">
                                     <span class="font-bold">{review.rating}</span>
-                                    <span class="text-[10px] text-gray-500">/5</span>
+                                    <span class="text-[10px] text-gray-500">/10</span>
                                 </div>
                             </div>
                             
@@ -123,7 +129,6 @@ const RealtimeReviewsIsland = () => {
 
 export default RealtimeReviewsIsland;
 
-// Автоматическое монтирование компонента в DOM-структуру Laravel Blade
 const targetContainer = document.getElementById('realtime-reviews-island');
 if (targetContainer) {
     const root = ReactDOM.createRoot(targetContainer);
