@@ -31,7 +31,7 @@
                             <p class="text-xs font-bold text-white line-clamp-2 group-hover:text-indigo-300 transition">
                                 {{ $review->work->title }}
                             </p>
-                            <span class="text-[10px] text-gray-400 mt-1">Оценка: {{ $review->rating }}/5</span>
+                            <span class="text-[10px] text-gray-400 mt-1">Оценка: {{ $review->rating }}/10</span>
                         </div>
                         <div class="w-full h-full bg-gray-700/40 flex items-center justify-center text-xs text-gray-500 italic">
                             Обложка
@@ -96,7 +96,7 @@
                                     </div>
                                     <div class="flex items-center space-x-1 text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
                                         <span class="font-bold text-xs">{{ $review->rating }}</span>
-                                        <span class="text-[10px] text-amber-500/80">/5</span>
+                                        <span class="text-[10px] text-amber-500/80">/10</span>
                                     </div>
                                 </div>
                                 <p class="text-sm text-gray-300 leading-relaxed">
