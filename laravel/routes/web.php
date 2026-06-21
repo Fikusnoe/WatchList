@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\GitHubController;
 use Illuminate\Http\Request;
 use App\Http\Controllers\WorkController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\WatchlistController;
 
 // Главная страница
 Route::get('/', [WorkController::class, 'index'])->name('home');
@@ -28,15 +29,23 @@ Route::prefix('catalog')->name('catalog.')->group(function () {
     Route::get('/books', [WorkController::class, 'catalogBooks'])->name('books');
 });
 
+// Карточка произведения
+Route::get('/works/{id}', [WorkController::class, 'show'])->name('works.show');
+
+// Старая домашняя страница
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+// ЛК
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
+
+    Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
+    Route::post('/works/{id}/watchlist', [WatchlistController::class, 'update'])->name('watchlist.update');
 });
 
 require __DIR__.'/auth.php';
@@ -46,12 +55,12 @@ Route::get('/auth/github', [GitHubController::class, 'redirect'])->name('auth.gi
 Route::get('/auth/github/callback', [GitHubController::class, 'callback']);
 
 // JWT
-Route::get('/dashboard', function (Request $request) {
-    $user = $request->user();
-    $token = $user->createToken('Watchlist Personal Access Token')->accessToken;
+//Route::get('/', function (Request $request) {
+//    $user = $request->user();
+//    $token = $user->createToken('Watchlist Personal Access Token')->accessToken;
 
-    return view('dashboard', [
-        'apiToken' => $token
-    ]);
-})->middleware(['auth'])->name('dashboard');
+//    return view('home', [
+//        'apiToken' => $token
+//    ]);
+//})->middleware(['auth'])->name('home');
 
